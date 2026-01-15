@@ -4,99 +4,166 @@
     <title>Habit Tracker</title>
 
     <style>
-        body {
-    display: flex;
-    flex-direction: column; /* Xếp các thành phần theo hàng dọc */
-    align-items: center;    /* Căn giữa tất cả theo chiều ngang */
+     :root {
+    --primary: #4f46e5;
+    --success: #10b981;
+    --bg: #f8fafc;
+    --text: #1e293b;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
     background-color: #f0f2f5;
-    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
     padding-top: 50px;
-    }
+    margin: 0;
+}
 
-    input, button {
-    margin: 5px;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    }
+.container {
+    background: white;
+    width: 90%;
+    max-width: 450px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
 
-    button {
-    background-color: #1a73e8;
-    color: white;
-    cursor: pointer;
-    }
-      li {
-       list-style: none; /* Bỏ dấu chấm đầu dòng mặc định */
-       background: white;
-       margin: 10px auto;
-       padding: 15px;
-       width: 300px;
-       display: flex; /* Giúp các thành phần nằm trên cùng một hàng */
-       justify-content: space-between; /* Đẩy tên thói quen và streak ra hai đầu */
-       border-radius: 8px;
-       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      }
-      .streak {
-        font-weight: bold;
-        color: #ff5722; /* Màu cam của ngọn lửa */
-      }
-      .delete-btn {
-      background-color: #ffcdd2; /* Màu đỏ nhạt */
-      color: #c62828;           /* Chữ đỏ đậm */
-      border: none;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 12px;
-      }
+h1 {
+    text-align: center;
+    color: #1a73e8;
+    font-size: 22px;
+    margin-bottom: 25px;
+}
 
-      .delete-btn:hover {
-       background-color: #ef9a9a; /* Đậm hơn một chút khi di chuột qua */
-      }
-      .progress-container {
-    width: 100%;
-    background-color: #e0e0e0;
+/* Tiến độ */
+.progress-container {
+    background: #e8eaed;
+    height: 12px;
     border-radius: 10px;
-    margin: 20px 0 5px 0;
-    height: 15px;
     overflow: hidden;
 }
 
 .progress-bar {
+    background: linear-gradient(90deg, #34a853, #b7e1cd);
+    width: 0%;
     height: 100%;
-    width: 0%; /* Bắt đầu từ 0% */
-    background: linear-gradient(90deg, #4caf50, #8bc34a);
-    transition: width 0.5s ease; /* Hiệu ứng chạy mượt mà */
+    transition: 0.5s ease;
 }
 
 #progressText {
-    font-size: 14px;
-    color: #666;
+    text-align: center;
+    font-size: 13px;
+    color: #5f6368;
+    margin: 10px 0 25px;
+}
+
+/* Nhập liệu */
+.input-group {
+    display: flex;
+    gap: 10px;
     margin-bottom: 20px;
 }
-.reset-btn {
-    background-color: #ff5252;
+
+input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    outline: none;
+}
+
+button#addBtn {
+    background: #1a73e8; /* Màu xanh chủ đạo */
     color: white;
     border: none;
-    padding: 8px 15px;
+    padding: 12px 30px; /* Tăng khoảng cách đệm (Trên-Dưới: 12px, Trái-Phải: 30px) */
+    border-radius: 12px; /* Bo góc mềm mại hơn */
+    font-size: 16px;    /* Tăng kích thước chữ */
+    font-weight: 700;   /* Làm chữ đậm hơn */
+    cursor: pointer;
+    transition: all 0.2s ease; /* Hiệu ứng mượt mà khi nhấn */
+    box-shadow: 0 4px 6px rgba(26, 115, 232, 0.2); /* Thêm bóng đổ cho nút nổi lên */
+}
+
+/* Thêm hiệu ứng khi di chuột vào (Hover) */
+button#addBtn:hover {
+    background: #1557b0; /* Màu đậm hơn một chút */
+    transform: scale(1.05); /* Nút to lên 5% khi rê chuột vào */
+    box-shadow: 0 6px 12px rgba(26, 115, 232, 0.3);
+}
+
+/* Hiệu ứng khi nhấn vào (Active) */
+button#addBtn:active {
+    transform: scale(0.98); /* Nút hơi lún xuống khi nhấn */
+}
+
+/* Danh sách */
+#habitList {
+    padding: 0;
+    list-style: none;
+}
+
+li {
+    background: #fff;
+    border: 1px solid #f1f3f4;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+li:hover { transform: translateY(-2px); }
+
+.streak {
+    color: #ea4335;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.delete-btn {
+    background: #fce8e6;
+    color: #d93025;
+    border: none;
+    padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.reset-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #9aa0a6;
+    font-size: 12px;
     margin-top: 20px;
-    font-size: 13px;
-    opacity: 0.8;
+    cursor: pointer;
+    text-decoration: underline;
 }
-.reset-btn:hover {
-    opacity: 1;
-    background-color: #d32f2f;
+
+/* Hiệu ứng nháy khi xong */
+@keyframes pulse {
+    0% { background-color: #fff; }
+    50% { background-color: #e6f4ea; }
+    100% { background-color: #fff; }
 }
+.completed-anim { animation: pulse 0.6s ease; }
     </style>
 </head>
 <body>
-    <h1>Ứng dụng theo dõi thói quen</h1>
-    <div class="progress-container" style="width: 100%; background: #eee; border-radius: 10px; margin: 20px 0;">
+    <div class="container">
+    <h1>THÓI QUEN MỖI NGÀY</h1>
+
+    <div class="progress-section">
+        <div class="progress-container" style="width: 100%; background: #eee; border-radius: 10px; margin: 20px 0;">
     <div id="progressBar" style="width: 0%; height: 15px; background: linear-gradient(90deg, #4caf50, #8bc34a); transition: 0.5s; border-radius: 10px;"></div>
 </div>
-<p id="progressText" style="text-align: center; color: #666;">Hôm nay bạn đã hoàn thành 0%</p>
+        <p id="progressText" style="text-align: center; color: #666;">Hôm nay bạn đã hoàn thành 0%</p>
     <input id="habitInput" type="text" placeholder="Nhập thói quen mới...">
     <button id="addBtn">Thêm một thói quen</button>
     <button id="resetBtn" class="reset-btn">Đặt lại toàn bộ</button>
@@ -118,6 +185,14 @@
     <button class="delete-btn">Xóa</button>
 </li>
         </ul>
+    <button id="resetBtn" class="reset-btn">Xóa toàn bộ dữ liệu</button>
+</div>
+
+<audio id="successSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
+<audio id="addSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+
+    
+
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script >
        const habitInput = document.getElementById('habitInput');
@@ -143,6 +218,7 @@ addBtn.addEventListener('click', function() {
 
         // 4. Xóa chữ trong ô nhập sau khi thêm xong
         habitInput.value = "";
+        document.getElementById('addSound').play();
         saveData();
         updateProgress();
     }
@@ -154,7 +230,7 @@ habitList.addEventListener('click', function(event) {
         const li = event.target.closest('li');
         li.remove(); 
         saveData(); 
-        updateProgress();
+        updateProgress(false);
         return; 
     }
 
@@ -174,13 +250,17 @@ habitList.addEventListener('click', function(event) {
         const countSpan = li.querySelector('.streak-count');
         let currentCount = parseInt(countSpan.innerText);
         countSpan.innerText = currentCount + 1;
+        // --- CHÈN ĐOẠN HIỆU ỨNG VÀ ÂM THANH VÀO ĐÂY ---
+document.getElementById('successSound').play(); // Phát tiếng "Ting"
+li.classList.add('completed-animation'); // Thêm hiệu ứng phát sáng
+setTimeout(() => li.classList.remove('completed-animation'), 600); // Xóa hiệu ứng sau 0.6 giây
 
         //  Ghi chú lại ngày hoàn thành vào thẻ li
         li.setAttribute('data-last-completed', today);
 
         //  Lưu trạng thái mới vào bộ nhớ
         saveData();
-        updateProgress();
+        updateProgress(true);
     }
 }); // Kết thúc khối điều khiển danh sách
      
@@ -199,13 +279,15 @@ function saveData() {
     localStorage.setItem('habits', JSON.stringify(habits));
 }
 
-function updateProgress() {
+function updateProgress(coChoPhaoNo) { // Biến này để điều khiển pháo
     const liItems = document.querySelectorAll('#habitList li');
     const total = liItems.length;
-    
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+
     if (total === 0) {
-        document.getElementById('progressBar').style.width = "0%";
-        document.getElementById('progressText').innerText = "Hãy thêm thói quen để bắt đầu!";
+        progressBar.style.width = "0%";
+        progressText.innerText = "Hãy thêm thói quen để bắt đầu!";
         return;
     }
 
@@ -219,20 +301,17 @@ function updateProgress() {
     });
 
     const percent = Math.round((completedToday / total) * 100);
-    
-    // Cập nhật giao diện
-    document.getElementById('progressBar').style.width = percent + "%";
-    document.getElementById('progressText').innerText = `Hôm nay bạn đã hoàn thành ${percent}%`;
-    // Nếu đạt 100% và có ít nhất một thói quen, thì bắn pháo hoa!
-    if (percent === 100 && total > 0) {
-    confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#4caf50', '#8bc34a', '#ffffff'] // Màu xanh lá hợp với ứng dụng
-    });
-}
-    
+    progressBar.style.width = percent + "%";
+    progressText.innerText = `Hôm nay bạn đã hoàn thành ${percent}%`;
+
+    // KHÓA AN TOÀN: Chỉ khi coChoPhaoNo là TRUE thì pháo mới được phép nổ
+    if (coChoPhaoNo === true && percent === 100) {
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+    }
 }
 
 // Lệnh kích hoạt nạp dữ liệu khi vừa mở trang

@@ -1,79 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Habit Tracker</title>
 
     <style>
-     :root {
-    --primary: #4f46e5;
-    --success: #10b981;
-    --bg: #f8fafc;
-    --text: #1e293b;
-}
+      :root {
+     --primary: #4f46e5;
+     --success: #10b981;
+     --bg: #f8fafc;
+     --text: #1e293b;
+    }
 
-body {
+    body {
     font-family: 'Segoe UI', sans-serif;
     background-color: #f0f2f5;
     display: flex;
     justify-content: center;
     padding-top: 50px;
     margin: 0;
-}
+    }
 
-.container {
+    .container {
     background: white;
     width: 90%;
     max-width: 450px;
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
+    }
 
-h1 {
+    h1 {
     text-align: center;
     color: #1a73e8;
     font-size: 22px;
     margin-bottom: 25px;
-}
+    }
 
-/* Tiến độ */
-.progress-container {
+    /* Tiến độ */
+    .progress-container {
     background: #e8eaed;
     height: 12px;
     border-radius: 10px;
     overflow: hidden;
-}
+    }
 
-.progress-bar {
+    .progress-bar {
     background: linear-gradient(90deg, #34a853, #b7e1cd);
     width: 0%;
     height: 100%;
     transition: 0.5s ease;
-}
+    }
 
-#progressText {
+    #progressText {
     text-align: center;
     font-size: 13px;
     color: #5f6368;
     margin: 10px 0 25px;
-}
+    }
 
-/* Nhập liệu */
-.input-group {
+   /* Nhập liệu */
+    .input-group {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-}
+    }
 
-input {
+    input {
     flex: 1;
     padding: 12px;
     border: 1px solid #dadce0;
     border-radius: 8px;
     outline: none;
-}
+    }
 
-button#addBtn {
+    button#addBtn {
     background: #1a73e8; /* Màu xanh chủ đạo */
     color: white;
     border: none;
@@ -84,27 +87,27 @@ button#addBtn {
     cursor: pointer;
     transition: all 0.2s ease; /* Hiệu ứng mượt mà khi nhấn */
     box-shadow: 0 4px 6px rgba(26, 115, 232, 0.2); /* Thêm bóng đổ cho nút nổi lên */
-}
+    }
 
 /* Thêm hiệu ứng khi di chuột vào (Hover) */
-button#addBtn:hover {
+    button#addBtn:hover {
     background: #1557b0; /* Màu đậm hơn một chút */
     transform: scale(1.05); /* Nút to lên 5% khi rê chuột vào */
     box-shadow: 0 6px 12px rgba(26, 115, 232, 0.3);
-}
+    }
 
-/* Hiệu ứng khi nhấn vào (Active) */
-button#addBtn:active {
+    /* Hiệu ứng khi nhấn vào (Active) */
+    button#addBtn:active {
     transform: scale(0.98); /* Nút hơi lún xuống khi nhấn */
-}
+    }
 
-/* Danh sách */
-#habitList {
+   /* Danh sách */
+    #habitList {
     padding: 0;
     list-style: none;
-}
+    }
 
-li {
+    li {
     background: #fff;
     border: 1px solid #f1f3f4;
     padding: 15px;
@@ -116,26 +119,26 @@ li {
     box-shadow: 0 2px 5px rgba(0,0,0,0.02);
     cursor: pointer;
     transition: 0.2s;
-}
+    }
 
-li:hover { transform: translateY(-2px); }
+    li:hover { transform: translateY(-2px); }
 
-.streak {
+    .streak {
     color: #ea4335;
     font-weight: bold;
     font-size: 14px;
-}
+    }
 
-.delete-btn {
+    .delete-btn {
     background: #fce8e6;
     color: #d93025;
     border: none;
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
-}
+    }
 
-.reset-btn {
+    .reset-btn {
     width: 100%;
     background: none;
     border: none;
@@ -144,7 +147,7 @@ li:hover { transform: translateY(-2px); }
     margin-top: 20px;
     cursor: pointer;
     text-decoration: underline;
-}
+    }
 
 /* Hiệu ứng nháy khi xong */
 @keyframes pulse {
@@ -157,43 +160,29 @@ li:hover { transform: translateY(-2px); }
 </head>
 <body>
     <div class="container">
-    <h1>THÓI QUEN MỖI NGÀY</h1>
+        <h1>THÓI QUEN MỖI NGÀY</h1>
 
-    <div class="progress-section">
-        <div class="progress-container" style="width: 100%; background: #eee; border-radius: 10px; margin: 20px 0;">
-    <div id="progressBar" style="width: 0%; height: 15px; background: linear-gradient(90deg, #4caf50, #8bc34a); transition: 0.5s; border-radius: 10px;"></div>
-</div>
-        <p id="progressText" style="text-align: center; color: #666;">Hôm nay bạn đã hoàn thành 0%</p>
-    <input id="habitInput" type="text" placeholder="Nhập thói quen mới...">
-    <button id="addBtn">Thêm một thói quen</button>
-    <button id="resetBtn" class="reset-btn">Đặt lại toàn bộ</button>
-       <ul id="habitList">
-          <li>
-    <span class="habit-name">Đọc sách 30 phút</span>
+        <div class="progress-section">
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+            <p id="progressText">Hôm nay bạn đã hoàn thành 0%</p>
+        </div>
 
-    <span class="streak">
-        🔥 <span class="streak-count">0</span> ngày
-    </span>
-    <button class="delete-btn">Xóa</button>
-          </li>
-          <li>
-    <span class="habit-name">Học bài 1 tiếng</span>
+        <div class="input-group">
+            <input type="text" id="habitInput" placeholder="Nhập thói quen mới...">
+            <button id="addBtn">Thêm một thói quen</button>
+        </div>
 
-    <span class="streak">
-        🔥 <span class="streak-count">0</span> ngày
-    </span>
-    <button class="delete-btn">Xóa</button>
-</li>
-        </ul>
-    <button id="resetBtn" class="reset-btn">Xóa toàn bộ dữ liệu</button>
-</div>
+        <ul id="habitList"></ul>
 
-<audio id="successSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
-<audio id="addSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+        <button id="resetBtn" class="reset-btn">Xóa toàn bộ dữ liệu</button>
+    </div>
 
-    
+    <audio id="successSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
+    <audio id="addSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 
-        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script >
        const habitInput = document.getElementById('habitInput');
 const addBtn = document.getElementById('addBtn');

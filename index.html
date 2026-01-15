@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Habit Tracker</title>
+
+    <style>
+        body {
+    display: flex;
+    flex-direction: column; /* Xếp các thành phần theo hàng dọc */
+    align-items: center;    /* Căn giữa tất cả theo chiều ngang */
+    background-color: #f0f2f5;
+    font-family: sans-serif;
+    padding-top: 50px;
+    }
+
+    input, button {
+    margin: 5px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    }
+
+    button {
+    background-color: #1a73e8;
+    color: white;
+    cursor: pointer;
+    }
+      li {
+       list-style: none; /* Bỏ dấu chấm đầu dòng mặc định */
+       background: white;
+       margin: 10px auto;
+       padding: 15px;
+       width: 300px;
+       display: flex; /* Giúp các thành phần nằm trên cùng một hàng */
+       justify-content: space-between; /* Đẩy tên thói quen và streak ra hai đầu */
+       border-radius: 8px;
+       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+      .streak {
+        font-weight: bold;
+        color: #ff5722; /* Màu cam của ngọn lửa */
+      }
+      .delete-btn {
+      background-color: #ffcdd2; /* Màu đỏ nhạt */
+      color: #c62828;           /* Chữ đỏ đậm */
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      }
+
+      .delete-btn:hover {
+       background-color: #ef9a9a; /* Đậm hơn một chút khi di chuột qua */
+      }
+      .progress-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    margin: 20px 0 5px 0;
+    height: 15px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%; /* Bắt đầu từ 0% */
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    transition: width 0.5s ease; /* Hiệu ứng chạy mượt mà */
+}
+
+#progressText {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+.reset-btn {
+    background-color: #ff5252;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 13px;
+    opacity: 0.8;
+}
+.reset-btn:hover {
+    opacity: 1;
+    background-color: #d32f2f;
+}
+    </style>
+</head>
+<body>
+    <h1>Ứng dụng theo dõi thói quen</h1>
+    <div class="progress-container" style="width: 100%; background: #eee; border-radius: 10px; margin: 20px 0;">
+    <div id="progressBar" style="width: 0%; height: 15px; background: linear-gradient(90deg, #4caf50, #8bc34a); transition: 0.5s; border-radius: 10px;"></div>
+</div>
+<p id="progressText" style="text-align: center; color: #666;">Hôm nay bạn đã hoàn thành 0%</p>
+    <input id="habitInput" type="text" placeholder="Nhập thói quen mới...">
+    <button id="addBtn">Thêm một thói quen</button>
+    <button id="resetBtn" class="reset-btn">Đặt lại toàn bộ</button>
+       <ul id="habitList">
+          <li>
+    <span class="habit-name">Đọc sách 30 phút</span>
+
+    <span class="streak">
+        🔥 <span class="streak-count">0</span> ngày
+    </span>
+    <button class="delete-btn">Xóa</button>
+          </li>
+          <li>
+    <span class="habit-name">Học bài 1 tiếng</span>
+
+    <span class="streak">
+        🔥 <span class="streak-count">0</span> ngày
+    </span>
+    <button class="delete-btn">Xóa</button>
+</li>
+        </ul>
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script >
+       const habitInput = document.getElementById('habitInput');
+const addBtn = document.getElementById('addBtn');
+const habitList = document.getElementById('habitList'); // Lấy danh sách
+
+addBtn.addEventListener('click', function() {
+    const text = habitInput.value;
+
+    if (text !== "") { // Chỉ thêm nếu ô nhập không trống
+        // 1. Tạo một thẻ li mới
+        const newHabit = document.createElement('li');
+        
+        // 2. Thiết lập nội dung cho thẻ li (giống cấu trúc các thẻ cũ)
+        newHabit.innerHTML = `
+          <span class="habit-name">${text}</span>
+          <span class="streak">🔥 <span class="streak-count">0</span> ngày</span>
+          <button class="delete-btn">Xóa</button>
+        `;
+
+        // 3. Gắn thẻ li này vào danh sách ul
+        habitList.appendChild(newHabit);
+
+        // 4. Xóa chữ trong ô nhập sau khi thêm xong
+        habitInput.value = "";
+        saveData();
+        updateProgress();
+    }
+});
+  //  Trung tâm điều khiển: Xóa, Tăng streak và Lưu dữ liệu
+habitList.addEventListener('click', function(event) {
+    //  XỬ LÝ NÚT XÓA
+    if (event.target.classList.contains('delete-btn')) {
+        const li = event.target.closest('li');
+        li.remove(); 
+        saveData(); 
+        updateProgress();
+        return; 
+    }
+
+    //  XỬ LÝ TĂNG STREAK (Khi nhấn vào thói quen)
+    const li = event.target.closest('li');
+    if (li) {
+        const today = new Date().toLocaleDateString();
+        const lastDate = li.getAttribute('data-last-completed');
+
+        //  Kiểm tra nếu hôm nay đã nhấn rồi
+        if (lastDate === today) {
+            alert("Bạn đã hoàn thành thói quen này hôm nay rồi! ✨");
+            return;
+        }
+
+        //  Nếu chưa nhấn: Tăng con số streak
+        const countSpan = li.querySelector('.streak-count');
+        let currentCount = parseInt(countSpan.innerText);
+        countSpan.innerText = currentCount + 1;
+
+        //  Ghi chú lại ngày hoàn thành vào thẻ li
+        li.setAttribute('data-last-completed', today);
+
+        //  Lưu trạng thái mới vào bộ nhớ
+        saveData();
+        updateProgress();
+    }
+}); // Kết thúc khối điều khiển danh sách
+     
+// --- ĐỊNH NGHĨA HÀM  ---
+
+function saveData() {
+    const habits = [];
+    const liItems = document.querySelectorAll('#habitList li');
+    liItems.forEach(li => {
+        habits.push({
+            name: li.querySelector('.habit-name').innerText,
+            count: li.querySelector('.streak-count').innerText,
+            lastDate: li.getAttribute('data-last-completed')
+        });
+    });
+    localStorage.setItem('habits', JSON.stringify(habits));
+}
+
+function updateProgress() {
+    const liItems = document.querySelectorAll('#habitList li');
+    const total = liItems.length;
+    
+    if (total === 0) {
+        document.getElementById('progressBar').style.width = "0%";
+        document.getElementById('progressText').innerText = "Hãy thêm thói quen để bắt đầu!";
+        return;
+    }
+
+    const today = new Date().toLocaleDateString();
+    let completedToday = 0;
+
+    liItems.forEach(li => {
+        if (li.getAttribute('data-last-completed') === today) {
+            completedToday++;
+        }
+    });
+
+    const percent = Math.round((completedToday / total) * 100);
+    
+    // Cập nhật giao diện
+    document.getElementById('progressBar').style.width = percent + "%";
+    document.getElementById('progressText').innerText = `Hôm nay bạn đã hoàn thành ${percent}%`;
+    // Nếu đạt 100% và có ít nhất một thói quen, thì bắn pháo hoa!
+    if (percent === 100 && total > 0) {
+    confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#4caf50', '#8bc34a', '#ffffff'] // Màu xanh lá hợp với ứng dụng
+    });
+}
+    
+}
+
+// Lệnh kích hoạt nạp dữ liệu khi vừa mở trang
+loadData();
+function loadData() {
+    const savedHabits = localStorage.getItem('habits');
+    if (savedHabits) {
+        const habits = JSON.parse(savedHabits);
+        
+        //  Xóa sạch danh sách cũ trên màn hình trước khi nạp lại
+        habitList.innerHTML = ""; 
+
+        habits.forEach(habit => {
+            const newHabit = document.createElement('li');
+            if (habit.lastDate) {
+                newHabit.setAttribute('data-last-completed', habit.lastDate);
+            }
+            newHabit.innerHTML = `
+                <span class="habit-name">${habit.name}</span>
+                <span class="streak">🔥 <span class="streak-count">${habit.count}</span> ngày</span>
+                <button class="delete-btn">Xóa</button>
+            `;
+            habitList.appendChild(newHabit);
+        });
+        updateProgress();
+    }
+}
+document.getElementById('resetBtn').addEventListener('click', function() {
+    if (confirm("Thầy có chắc chắn muốn xóa toàn bộ thói quen và streak không? Hành động này không thể hoàn tác!")) {
+        localStorage.clear(); // Xóa sạch bộ nhớ
+        habitList.innerHTML = ""; // Xóa danh sách trên màn hình
+        updateProgress(); // Cập nhật lại thanh tiến trình về 0%
+    }
+});
+
+// Gọi hàm lấy dữ liệu ngay khi vừa tải trang
+loadData();
+    </script>
+</body>
+</html>

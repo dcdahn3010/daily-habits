@@ -148,6 +148,23 @@
     cursor: pointer;
     text-decoration: underline;
     }
+    /* Thiết kế huy hiệu */
+.rank-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+}
+
+/* Các cấp độ */
+.rank-novice { background: #e2e8f0; color: #64748b; }    /* Cấp 1: Xám (Tập sự) */
+.rank-warrior { background: #dbeafe; color: #1e40af; }   /* Cấp 2: Xanh (Chiến binh) */
+.rank-master { background: #fef9c3; color: #854d0e; }    /* Cấp 3: Vàng (Bậc thầy) */
+.rank-legend { background: #fce7f3; color: #be185d; box-shadow: 0 0 10px #fbcfe8; } /* Cấp 4: Tím (Huyền thoại) */
 
 /* Hiệu ứng nháy khi xong */
 @keyframes pulse {
@@ -160,23 +177,21 @@
 </head>
 <body>
     <div class="container">
-        <h1>THÓI QUEN MỖI NGÀY</h1>
+    <h1>THÓI QUEN MỖI NGÀY</h1>
 
-        <div class="progress-section">
-            <div class="progress-container">
-                <div id="progressBar" class="progress-bar"></div>
-            </div>
-            <p id="progressText">Hôm nay bạn đã hoàn thành 0%</p>
-        </div>
+    <div class="progress-section">
+    <div class="progress-container">
+    <div id="progressBar" class="progress-bar"></div>
+    </div>
+        <p id="progressText">Hôm nay bạn đã hoàn thành 0%</p>
+    </div>
 
-        <div class="input-group">
-            <input type="text" id="habitInput" placeholder="Nhập thói quen mới...">
-            <button id="addBtn">Thêm một thói quen</button>
-        </div>
-
-        <ul id="habitList"></ul>
-
-        <button id="resetBtn" class="reset-btn">Xóa toàn bộ dữ liệu</button>
+    <div class="input-group">
+        <input type="text" id="habitInput" placeholder="Nhập thói quen mới...">
+        <button id="addBtn">Thêm một thói quen</button>
+    </div>
+    <ul id="habitList"></ul>
+    <button id="resetBtn" class="reset-btn">Xóa toàn bộ dữ liệu</button>
     </div>
 
     <audio id="successSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
@@ -185,15 +200,15 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script >
        const habitInput = document.getElementById('habitInput');
-const addBtn = document.getElementById('addBtn');
-const habitList = document.getElementById('habitList'); // Lấy danh sách
+       const addBtn = document.getElementById('addBtn');
+       const habitList = document.getElementById('habitList'); // Lấy danh sách
 
-addBtn.addEventListener('click', function() {
-    const text = habitInput.value;
+    addBtn.addEventListener('click', function() {
+       const text = habitInput.value;
 
-    if (text !== "") { // Chỉ thêm nếu ô nhập không trống
+       if (text !== "") { 
         // 1. Tạo một thẻ li mới
-        const newHabit = document.createElement('li');
+       const newHabit = document.createElement('li');
         
         // 2. Thiết lập nội dung cho thẻ li (giống cấu trúc các thẻ cũ)
         newHabit.innerHTML = `
@@ -210,22 +225,22 @@ addBtn.addEventListener('click', function() {
         document.getElementById('addSound').play();
         saveData();
         updateProgress();
-    }
-});
-  //  Trung tâm điều khiển: Xóa, Tăng streak và Lưu dữ liệu
-habitList.addEventListener('click', function(event) {
+        }
+    });
+     //  Trung tâm điều khiển: Xóa, Tăng streak và Lưu dữ liệu
+    habitList.addEventListener('click', function(event) {
     //  XỬ LÝ NÚT XÓA
-    if (event.target.classList.contains('delete-btn')) {
+        if (event.target.classList.contains('delete-btn')) {
         const li = event.target.closest('li');
         li.remove(); 
         saveData(); 
         updateProgress(false);
         return; 
-    }
+        }
 
     //  XỬ LÝ TĂNG STREAK (Khi nhấn vào thói quen)
-    const li = event.target.closest('li');
-    if (li) {
+        const li = event.target.closest('li');
+        if (li) {
         const today = new Date().toLocaleDateString();
         const lastDate = li.getAttribute('data-last-completed');
 
@@ -236,13 +251,26 @@ habitList.addEventListener('click', function(event) {
         }
 
         //  Nếu chưa nhấn: Tăng con số streak
+        // --- Tăng số và Cập nhật Huy hiệu ngay lập tức ---
         const countSpan = li.querySelector('.streak-count');
         let currentCount = parseInt(countSpan.innerText);
-        countSpan.innerText = currentCount + 1;
-        // --- CHÈN ĐOẠN HIỆU ỨNG VÀ ÂM THANH VÀO ĐÂY ---
-document.getElementById('successSound').play(); // Phát tiếng "Ting"
-li.classList.add('completed-animation'); // Thêm hiệu ứng phát sáng
-setTimeout(() => li.classList.remove('completed-animation'), 600); // Xóa hiệu ứng sau 0.6 giây
+        const newStreak = currentCount + 1;
+        countSpan.innerText = newStreak;
+
+// Gọi hàm kiểm tra cấp độ mới
+const rankInfo = getRank(newStreak);
+
+// Tìm cái huy hiệu đang có trên dòng đó và thay đổi nó
+const badge = li.querySelector('.rank-badge');
+if (badge) {
+    badge.innerText = rankInfo.name; // Đổi tên (VD: Tập sự -> Chiến binh)
+    badge.className = `rank-badge ${rankInfo.class}`; // Đổi màu
+}
+// -----------------------------------------------------------
+        // ---HIỆU ỨNG VÀ ÂM THANH---
+        document.getElementById('successSound').play(); // Phát tiếng "Ting"
+        li.classList.add('completed-animation'); // Thêm hiệu ứng phát sáng
+        setTimeout(() => li.classList.remove('completed-animation'), 600); // Xóa hiệu ứng sau 0.6 giây
 
         //  Ghi chú lại ngày hoàn thành vào thẻ li
         li.setAttribute('data-last-completed', today);
@@ -250,23 +278,23 @@ setTimeout(() => li.classList.remove('completed-animation'), 600); // Xóa hiệ
         //  Lưu trạng thái mới vào bộ nhớ
         saveData();
         updateProgress(true);
-    }
-}); // Kết thúc khối điều khiển danh sách
+        }
+    }); // Kết thúc khối điều khiển danh sách
      
-// --- ĐỊNH NGHĨA HÀM  ---
+     // --- ĐỊNH NGHĨA HÀM  ---
 
-function saveData() {
-    const habits = [];
-    const liItems = document.querySelectorAll('#habitList li');
-    liItems.forEach(li => {
+    function saveData() {
+        const habits = [];
+        const liItems = document.querySelectorAll('#habitList li');
+        liItems.forEach(li => {
         habits.push({
             name: li.querySelector('.habit-name').innerText,
             count: li.querySelector('.streak-count').innerText,
             lastDate: li.getAttribute('data-last-completed')
         });
-    });
-    localStorage.setItem('habits', JSON.stringify(habits));
-}
+        });
+        localStorage.setItem('habits', JSON.stringify(habits));
+    }
 
 function updateProgress(coChoPhaoNo) { // Biến này để điều khiển pháo
     const liItems = document.querySelectorAll('#habitList li');
@@ -302,42 +330,141 @@ function updateProgress(coChoPhaoNo) { // Biến này để điều khiển phá
         });
     }
 }
+// Hàm tính danh hiệu dựa trên số ngày Streak
+function getRank(streak) {
+    if (streak >= 66) return { name: 'HUYỀN THOẠI 👑', class: 'rank-legend' };
+    if (streak >= 21) return { name: 'BẬC THẦY ⚔️', class: 'rank-master' };
+    if (streak >= 7)  return { name: 'CHIẾN BINH 🔥', class: 'rank-warrior' };
+    return { name: 'TẬP SỰ 🌱', class: 'rank-novice' };
+}
 
 // Lệnh kích hoạt nạp dữ liệu khi vừa mở trang
 loadData();
+
 function loadData() {
     const savedHabits = localStorage.getItem('habits');
     if (savedHabits) {
         const habits = JSON.parse(savedHabits);
         
-        //  Xóa sạch danh sách cũ trên màn hình trước khi nạp lại
-        habitList.innerHTML = ""; 
+        // Xóa sạch danh sách cũ để nạp lại từ đầu
+        habitList.innerHTML = "";
 
         habits.forEach(habit => {
             const newHabit = document.createElement('li');
+            
+            // Khôi phục ngày hoàn thành gần nhất (nếu có)
             if (habit.lastDate) {
                 newHabit.setAttribute('data-last-completed', habit.lastDate);
             }
+
+            // --- ĐOẠN MỚI: TÍNH TOÁN DANH HIỆU ---
+            // Lưu ý: Trong data cũ bạn lưu là 'count', nên ở đây ta dùng habit.count
+            const currentStreak = habit.count || 0; 
+            const rankInfo = getRank(currentStreak);
+            // -------------------------------------
+
             newHabit.innerHTML = `
-                <span class="habit-name">${habit.name}</span>
-                <span class="streak">🔥 <span class="streak-count">${habit.count}</span> ngày</span>
-                <button class="delete-btn">Xóa</button>
+                <span class="habit-name">
+                    ${habit.name} 
+                    <span class="rank-badge ${rankInfo.class}">${rankInfo.name}</span>
+                </span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="streak">
+                        🔥 <span class="streak-count">${currentStreak}</span> ngày
+                    </span>
+                    <button class="delete-btn">Xóa</button>
+                </div>
             `;
+            
+            // Thêm hiệu ứng nếu đã hoàn thành trong hôm nay
+            const today = new Date().toLocaleDateString();
+            if (habit.lastDate === today) {
+                newHabit.classList.add('completed');
+            }
+
             habitList.appendChild(newHabit);
         });
-        updateProgress();
+        
+        // Cập nhật lại thanh tiến trình (không bắn pháo hoa)
+        updateProgress(false);
     }
 }
-document.getElementById('resetBtn').addEventListener('click', function() {
-    if (confirm("Thầy có chắc chắn muốn xóa toàn bộ thói quen và streak không? Hành động này không thể hoàn tác!")) {
-        localStorage.clear(); // Xóa sạch bộ nhớ
-        habitList.innerHTML = ""; // Xóa danh sách trên màn hình
-        updateProgress(); // Cập nhật lại thanh tiến trình về 0%
-    }
-});
 
 // Gọi hàm lấy dữ liệu ngay khi vừa tải trang
 loadData();
+// === CÁC HÀM DÙNG ĐỂ TEST (DEBUG) ===
+
+// 1. Hàm Hack Streak: Biến ngay thành Huyền Thoại để xem huy hiệu đổi màu chưa
+function hackStreak(days) {
+    const habits = document.querySelectorAll('#habitList li');
+    if (habits.length === 0) {
+        alert("Bạn phải thêm ít nhất 1 thói quen để hack!");
+        return;
+    }
+
+    habits.forEach(li => {
+        // Cập nhật số hiển thị
+        const countSpan = li.querySelector('.streak-count');
+        countSpan.innerText = days;
+
+        // Cập nhật huy hiệu
+        const rankInfo = getRank(days);
+        const badge = li.querySelector('.rank-badge');
+        if (badge) {
+            badge.innerText = rankInfo.name;
+            badge.className = `rank-badge ${rankInfo.class}`;
+        }
+    });
+    
+    // Lưu lại cái "sự hack" này vào bộ nhớ để F5 không bị mất
+    saveData();
+    alert(`Đã hack toàn bộ thói quen lên ${days} ngày!`);
+}
+
+// 2. Hàm Giả lập ngày mới: Cho phép bấm hoàn thành tiếp mà không cần đợi mai
+function cheatNewDay() {
+    const habits = document.querySelectorAll('#habitList li');
+    habits.forEach(li => {
+        // Xóa dấu vết ngày hôm nay -> Máy tính tưởng là chưa làm -> Cho làm tiếp
+        li.removeAttribute('data-last-completed'); 
+        li.classList.remove('completed'); // Bỏ gạch ngang (nếu có CSS completed)
+    });
+    
+    saveData();
+    // Reset thanh tiến trình về 0%
+    updateProgress(false); 
+    alert("Đã reset trạng thái! Bạn có thể bấm hoàn thành lần nữa để tăng streak.");
+}
+
+// 3. Hàm Test Pháo hoa: Xem pháo nổ cho vui
+function testConfetti() {
+    confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
+}
     </script>
+    <div id="debugPanel" style="
+    position: fixed; 
+    bottom: 10px; 
+    right: 10px; 
+    background: #333; 
+    color: white; 
+    padding: 15px; 
+    border-radius: 10px; 
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 9999;
+    font-family: monospace;
+">
+    <h3 style="margin: 0 0 10px 0; border-bottom: 1px solid #555; padding-bottom: 5px;">🛠️ TEST TOOL</h3>
+    
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button onclick="hackStreak(65)" style="cursor:pointer; padding: 5px;">🚀 Hack lên 65 ngày</button>
+        <button onclick="cheatNewDay()" style="cursor:pointer; padding: 5px;">🌅 Giả lập 'Ngày mới'</button>
+        <button onclick="testConfetti()" style="cursor:pointer; padding: 5px;">🎉 Test Pháo hoa</button>
+        <button onclick="document.getElementById('debugPanel').style.display='none'" style="cursor:pointer; padding: 5px; background: #ff4444; color: white; border:none;">❌ Đóng bảng</button>
+    </div>
+</div>
 </body>
 </html>
